@@ -1,7 +1,7 @@
 package com.shobhit63.di
 
-import com.shobhit63.controller.user.UserController
-import com.shobhit63.controller.user.UserControllerImpl
+import com.shobhit63.repository.user.UserRepository
+import com.shobhit63.repository.user.UserRepositoryImpl
 import com.shobhit63.util.Constants.DATABASE_NAME
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
@@ -12,7 +12,7 @@ val mainModule = module {
         KMongo.createClient().coroutine
             .getDatabase(DATABASE_NAME)
     }
-    single<UserController> {
-        UserControllerImpl(get())
+    single<UserRepository> {
+        UserRepositoryImpl(get())
     }
 }

@@ -8,6 +8,8 @@ val koin_version: String by project
 plugins {
     kotlin("jvm") version "1.9.20"
     id("io.ktor.plugin") version "2.3.6"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+
 }
 
 group = "com.shobhit63"
@@ -36,8 +38,6 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
     //KMongo - Kotlin library to access local mongo db that running on your machine
     implementation("org.litote.kmongo:kmongo:$kmongo_version")
@@ -45,7 +45,21 @@ dependencies {
 
     //Koin core features  //server side we don't have hilt
     implementation("io.insert-koin:koin-core:$koin_version")
-    testImplementation("io.insert-koin:koin-test:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+
+
+    //Test Dependencies
+    //Gson
+    testImplementation("com.google.code.gson:gson:2.10.1")
+    //Koin
+    testImplementation("io.insert-koin:koin-test:$koin_version")
+    // Ktor Test
+    testImplementation("io.ktor:ktor-server-tests-jvm")
+    //Kotlin Test
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    //Truth
+    testImplementation("com.google.truth:truth:1.1.4")
+
+
 }

@@ -22,6 +22,7 @@ fun Application.configureSockets() {
                     if (text.equals("bye", ignoreCase = true)) {
                         close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
                     }
+
                 }
             }
         }

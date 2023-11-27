@@ -94,7 +94,5 @@ fun Route.loginUser(userRepository: UserRepository) {
             )
         }
 
-
-
     }
 }

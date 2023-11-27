@@ -2,6 +2,8 @@ package com.shobhit63.di
 
 import com.shobhit63.repository.follow.FollowRepository
 import com.shobhit63.repository.follow.FollowRepositoryImpl
+import com.shobhit63.repository.post.PostRepository
+import com.shobhit63.repository.post.PostRepositoryImpl
 import com.shobhit63.repository.user.UserRepository
 import com.shobhit63.repository.user.UserRepositoryImpl
 import com.shobhit63.util.Constants.DATABASE_NAME
@@ -19,5 +21,8 @@ val mainModule = module {
     }
     single<FollowRepository> {
         FollowRepositoryImpl(get())
+    }
+    single<PostRepository> {
+        PostRepositoryImpl(get())
     }
 }

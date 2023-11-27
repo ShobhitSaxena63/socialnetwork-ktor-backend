@@ -8,9 +8,9 @@ import io.ktor.server.auth.jwt.*
 
 fun Application.configureSecurity() {
     // Please read the jwt property from the config file if you are using EngineMain
-    val jwtAudience = "jwt-audience"
-    val jwtDomain = "https://jwt-provider-domain/"
-    val jwtRealm = "ktor sample app"
+    val jwtAudience = environment.config.property("jwt.audience").getString()
+    val jwtDomain = environment.config.property("jwt.domain").getString()
+    val jwtRealm = environment.config.property("jwt.realm").getString()
     val jwtSecret = "secret"
     authentication {
         jwt {

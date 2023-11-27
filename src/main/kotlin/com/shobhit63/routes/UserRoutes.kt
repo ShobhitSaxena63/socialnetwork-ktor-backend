@@ -5,6 +5,7 @@ import com.shobhit63.data.models.User
 import com.shobhit63.data.requests.CreateAccountRequest
 import com.shobhit63.data.requests.LoginRequest
 import com.shobhit63.data.response.BasicApiResponse
+import com.shobhit63.service.UserService
 import com.shobhit63.util.ApiResponseMessages.FIELDS_BLANK
 import com.shobhit63.util.ApiResponseMessages.INVALID_CREDENTIALS
 import com.shobhit63.util.ApiResponseMessages.USER_ALREADY_EXISTS
@@ -14,14 +15,13 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.createUserRoute(userRepository: UserRepository) {
+fun Route.createUserRoute(userService: UserService) {
         post("/api/user/create") {
             val request = call.receiveOrNull<CreateAccountRequest>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
-            val userExist = userRepository.getUserByEmail(request.email) != null
-            if (userExist) {
+            if (userService.doesUserWithEmailExist(request.email)) {
                 call.respond(
                     BasicApiResponse(
                         successful = false,
@@ -31,32 +31,26 @@ fun Route.createUserRoute(userRepository: UserRepository) {
                 return@post
             }
 
-            if (request.email.isBlank() || request.password.isBlank() || request.username.isBlank()) {
-                call.respond(
-                    BasicApiResponse(
-                        successful = false,
-                        message = FIELDS_BLANK
+            when(userService.validateCreateAccountRequest(request)){
+                is UserService.ValidationEvent.ErrorFieldEmpty -> {
+                    call.respond(
+                        BasicApiResponse(
+                            successful = false,
+                            message = FIELDS_BLANK
+
+                        )
                     )
-                )
-                return@post
+                }
+                is UserService.ValidationEvent.Success -> {
+                    userService.createUser(request)
+                    call.respond(
+                        BasicApiResponse(
+                            successful = true,
+                        )
+                    )
+                }
             }
-            userRepository.createUser(
-                User(
-                    email = request.email,
-                    username = request.username,
-                    password = request.password,
-                    profileImageUrl = "",
-                    bio = "",
-                    gitHubUrl = null,
-                    instagramURl = null,
-                    linkedInURl = null
-                )
-            )
-            call.respond(
-                BasicApiResponse(
-                    successful = true,
-                )
-            )
+
         }
 }
 

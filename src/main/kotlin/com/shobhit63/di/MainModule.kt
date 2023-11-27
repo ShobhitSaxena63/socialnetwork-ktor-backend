@@ -6,6 +6,9 @@ import com.shobhit63.repository.post.PostRepository
 import com.shobhit63.repository.post.PostRepositoryImpl
 import com.shobhit63.repository.user.UserRepository
 import com.shobhit63.repository.user.UserRepositoryImpl
+import com.shobhit63.service.FollowService
+import com.shobhit63.service.PostService
+import com.shobhit63.service.UserService
 import com.shobhit63.util.Constants.DATABASE_NAME
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
@@ -24,5 +27,14 @@ val mainModule = module {
     }
     single<PostRepository> {
         PostRepositoryImpl(get())
+    }
+    single {
+        UserService(get())
+    }
+    single {
+        FollowService(get())
+    }
+    single {
+        PostService(get())
     }
 }

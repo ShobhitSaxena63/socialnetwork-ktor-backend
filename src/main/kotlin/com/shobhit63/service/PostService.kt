@@ -3,6 +3,8 @@ package com.shobhit63.service
 import com.shobhit63.data.models.Post
 import com.shobhit63.data.requests.CreatePostRequest
 import com.shobhit63.repository.post.PostRepository
+import com.shobhit63.util.Constants
+import com.shobhit63.util.Constants.DEFAULT_POST_PAGE_SIZE
 
 class PostService(
     private val repository: PostRepository
@@ -15,6 +17,16 @@ class PostService(
                 timeStamp = System.currentTimeMillis(),
                 description = request.description
             )
+        )
+    }
+
+    suspend fun getPostsForFollows(
+        userId:String,
+        page:Int = 0,
+        pageSize :Int = DEFAULT_POST_PAGE_SIZE
+    ): List<Post> {
+        return repository.getPostsByFollows(
+            userId, page, pageSize
         )
     }
 }

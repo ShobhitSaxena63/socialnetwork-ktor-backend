@@ -43,4 +43,8 @@ class PostRepositoryImpl(
         ).skip(page * pageSize).limit(pageSize).descendingSort(Post::timeStamp).toList()
 
     }
+
+    override suspend fun getPost(postId: String): Post? {
+        return posts.findOneById(postId)
+    }
 }

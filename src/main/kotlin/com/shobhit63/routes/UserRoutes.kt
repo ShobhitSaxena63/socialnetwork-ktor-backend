@@ -2,8 +2,6 @@ package com.shobhit63.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.shobhit63.repository.user.UserRepository
-import com.shobhit63.data.models.User
 import com.shobhit63.data.requests.CreateAccountRequest
 import com.shobhit63.data.requests.LoginRequest
 import com.shobhit63.data.response.AuthResponse
@@ -19,7 +17,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
 
-fun Route.createUserRoute(userService: UserService) {
+fun Route.createUser(userService: UserService) {
     post("/api/user/create") {
         val request = call.receiveOrNull<CreateAccountRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)

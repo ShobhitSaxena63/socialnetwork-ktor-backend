@@ -36,7 +36,7 @@ class CreateUserRouteTest : KoinTest {
     fun `Create user, no body attached, responds with BadRequest`() = testApplication {
         application {
             routing {
-                createUserRoute(userRepository)
+                createUser(userRepository)
             }
         }
         client.post("/api/user/create").apply {
@@ -59,7 +59,7 @@ class CreateUserRouteTest : KoinTest {
         userRepository.createUser(user)
         application {
             routing {
-                createUserRoute(userRepository)
+                createUser(userRepository)
             }
         }
 
@@ -85,7 +85,7 @@ class CreateUserRouteTest : KoinTest {
 
         application {
             routing {
-                createUserRoute(userRepository)
+                createUser(userRepository)
             }
         }
 

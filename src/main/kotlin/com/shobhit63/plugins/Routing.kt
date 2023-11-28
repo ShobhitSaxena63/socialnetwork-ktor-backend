@@ -1,10 +1,8 @@
 package com.shobhit63.plugins
 
-import com.shobhit63.repository.follow.FollowRepository
-import com.shobhit63.repository.post.PostRepository
-import com.shobhit63.repository.user.UserRepository
 import com.shobhit63.routes.*
 import com.shobhit63.service.FollowService
+import com.shobhit63.service.LikeService
 import com.shobhit63.service.PostService
 import com.shobhit63.service.UserService
 import io.ktor.server.application.*
@@ -15,13 +13,14 @@ fun Application.configureRouting() {
     val userService: UserService by inject<UserService>()
     val followService: FollowService by inject<FollowService>()
     val postService: PostService by inject<PostService>()
+    val likeService: LikeService by inject<LikeService>()
 
     val jwtIssuer = environment.config.property("jwt.domain").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
     val jwtSecret = environment.config.property("jwt.secret").getString()
     routing {
         //User routes
-        createUserRoute(userService)
+        createUser(userService)
         loginUser(
             userService = userService,
             jwtIssuer = jwtIssuer,
@@ -34,7 +33,14 @@ fun Application.configureRouting() {
         unfollowUser(followService)
 
         //Post routes
-        createPostRoute(postService,userService)
+        createPost(postService,userService)
         getPostsForFollows(postService, userService)
+        deletePost(postService, userService)
+
+
+
+        //Like routes
+        likeParent(likeService, userService)
+        unLikeParent(likeService, userService)
     }
 }

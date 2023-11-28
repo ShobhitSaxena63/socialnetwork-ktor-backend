@@ -1,11 +1,9 @@
 package com.shobhit63.routes
 
-import com.shobhit63.data.models.Post
 import com.shobhit63.data.requests.CreatePostRequest
-import com.shobhit63.data.requests.FollowUpdateRequest
+import com.shobhit63.data.requests.DeletePostRequest
 import com.shobhit63.data.response.BasicApiResponse
-import com.shobhit63.plugins.email
-import com.shobhit63.repository.post.PostRepository
+import com.shobhit63.service.LikeService
 import com.shobhit63.service.PostService
 import com.shobhit63.service.UserService
 import com.shobhit63.util.ApiResponseMessages
@@ -16,12 +14,11 @@ import com.shobhit63.util.QueryParams.PARAM_USER_ID
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.createPostRoute(
+fun Route.createPost(
     postService: PostService,
     userService: UserService
 ) {
@@ -89,3 +86,38 @@ fun Route.getPostsForFollows(
     }
 
 }
+
+fun Route.deletePost(
+    postService: PostService,
+    userService: UserService,
+    likeService: LikeService
+) {
+    authenticate {
+        delete ("/api/post/delete") {
+            val request = call.receiveOrNull<DeletePostRequest>() ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            val post = postService.getPost(request.postId)
+            if(post == null){
+                call.respond(
+                    HttpStatusCode.NotFound
+                )
+                return@delete
+            }
+            ifEmailBelongsToUser(
+                userId = post.userId,
+                validateEmail = userService::doesEmailBelongsToUserId
+            ) {
+                postService.deletePost(request.postId)
+                likeService.deleteLikesForParent(request.postId)
+                //TODO: Delete comments from post
+                call.respond(HttpStatusCode.OK)
+
+            }
+
+
+        }
+    }
+}
+

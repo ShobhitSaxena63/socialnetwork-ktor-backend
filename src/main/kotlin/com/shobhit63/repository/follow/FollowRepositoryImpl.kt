@@ -24,7 +24,7 @@ class FollowRepositoryImpl(
         }
         following.insertOne(
             Following(
-                followingUserId,followingUserId
+                followingUserId,followedUserId
             )
         )
         return true

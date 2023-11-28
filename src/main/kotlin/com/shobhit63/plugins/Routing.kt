@@ -1,10 +1,7 @@
 package com.shobhit63.plugins
 
 import com.shobhit63.routes.*
-import com.shobhit63.service.FollowService
-import com.shobhit63.service.LikeService
-import com.shobhit63.service.PostService
-import com.shobhit63.service.UserService
+import com.shobhit63.service.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -14,6 +11,7 @@ fun Application.configureRouting() {
     val followService: FollowService by inject<FollowService>()
     val postService: PostService by inject<PostService>()
     val likeService: LikeService by inject<LikeService>()
+    val commentService: CommentService by inject<CommentService>()
 
     val jwtIssuer = environment.config.property("jwt.domain").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
@@ -35,12 +33,15 @@ fun Application.configureRouting() {
         //Post routes
         createPost(postService,userService)
         getPostsForFollows(postService, userService)
-        deletePost(postService, userService)
-
-
+        deletePost(postService, userService,likeService)
 
         //Like routes
         likeParent(likeService, userService)
         unLikeParent(likeService, userService)
+
+        //Comment routes
+        createComment(commentService, userService)
+        deleteComment(commentService, userService, likeService)
+        getCommentsForPost(commentService)
     }
 }

@@ -42,7 +42,7 @@ val mainModule = module {
         ActivityRepositoryImpl(get())
     }
     single {
-        UserService(get())
+        UserService(get(),get())
     }
     single {
         FollowService(get())

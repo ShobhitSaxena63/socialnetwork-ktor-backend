@@ -1,6 +1,5 @@
 package com.shobhit63.service
 
-import com.shobhit63.data.util.ParentType
 import com.shobhit63.repository.likes.LikeRepository
 
 class LikeService(

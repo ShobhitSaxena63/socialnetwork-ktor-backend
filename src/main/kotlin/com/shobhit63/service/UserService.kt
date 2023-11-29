@@ -2,41 +2,46 @@ package com.shobhit63.service
 
 import com.shobhit63.data.models.User
 import com.shobhit63.data.requests.CreateAccountRequest
-import com.shobhit63.data.requests.LoginRequest
-import com.shobhit63.data.response.BasicApiResponse
+import com.shobhit63.data.response.UserResponseItem
+import com.shobhit63.repository.follow.FollowRepository
 import com.shobhit63.repository.user.UserRepository
-import com.shobhit63.util.ApiResponseMessages
-import io.ktor.server.application.*
-import io.ktor.server.response.*
 
 class UserService(
-    private val repository: UserRepository
+    private val userRepository: UserRepository,
+    private val followRepository: FollowRepository
 ) {
     suspend fun doesUserWithEmailExist(email: String): Boolean {
-        return repository.getUserByEmail(email) != null
+        return userRepository.getUserByEmail(email) != null
     }
+
     suspend fun doesEmailBelongsToUserId(email: String, userId: String): Boolean {
-        return repository.doesEmailBelongToUserId(email, userId)
+        return userRepository.doesEmailBelongToUserId(email, userId)
     }
 
-    suspend fun getUserByEmail(email:String):User? {
-        return repository.getUserByEmail(email)
+    suspend fun getUserByEmail(email: String): User? {
+        return userRepository.getUserByEmail(email)
     }
 
-    fun isValidPassword(enteredPassword:String,actualPassword:String):Boolean {
+    fun isValidPassword(enteredPassword: String, actualPassword: String): Boolean {
         return enteredPassword == actualPassword
     }
 
-    suspend fun doesPasswordMatchForUser(request: LoginRequest): Boolean {
-        return repository.doesPasswordForUserMatch(
-            email = request.email,
-            enteredPassword = request.password
-        )
+    suspend fun searchForUsers(query: String, userId: String): List<UserResponseItem> {
+        val users = userRepository.searchForUsers(query)
+        val followsByUser = followRepository.getFollowsByUser(userId)
+        return users.map { user ->
+            val isFollowing = followsByUser.find { it.followedUserId == user.id } != null
+            UserResponseItem(
+                username = user.username,
+                profilePictureUrl = user.profileImageUrl,
+                bio = user.bio,
+                isFollowing = isFollowing
+            )
+        }
     }
 
-
     suspend fun createUser(request: CreateAccountRequest) {
-        repository.createUser(
+        userRepository.createUser(
             User(
                 email = request.email,
                 username = request.username,

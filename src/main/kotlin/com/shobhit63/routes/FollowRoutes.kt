@@ -1,8 +1,11 @@
 package com.shobhit63.routes
 
+import com.shobhit63.data.models.Activity
 import com.shobhit63.data.requests.FollowUpdateRequest
 import com.shobhit63.data.response.BasicApiResponse
+import com.shobhit63.data.util.ActivityType
 import com.shobhit63.repository.follow.FollowRepository
+import com.shobhit63.service.ActivityService
 import com.shobhit63.service.FollowService
 import com.shobhit63.util.ApiResponseMessages.USER_NOT_FOUND
 import io.ktor.http.*
@@ -12,7 +15,10 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.followUser(followService: FollowService) {
+fun Route.followUser(
+    followService: FollowService,
+    activityService: ActivityService
+    ) {
     authenticate {
         post("/api/following/follow") {
             val request = call.receiveOrNull<FollowUpdateRequest>() ?: kotlin.run {
@@ -23,6 +29,15 @@ fun Route.followUser(followService: FollowService) {
             val didUserExist = followService.followUserIfExists(request,call.userId)
 
             if (didUserExist) {
+                activityService.createActivity(
+                    Activity(
+                        timeStamp = System.currentTimeMillis(),
+                        byUserId = call.userId,
+                        toUserId = request.followedUserId,
+                        type = ActivityType.FollowedUser.type,
+                        parentId = "",
+                    )
+                )
                 call.respond(
                     HttpStatusCode.OK, BasicApiResponse(
                         successful = true,

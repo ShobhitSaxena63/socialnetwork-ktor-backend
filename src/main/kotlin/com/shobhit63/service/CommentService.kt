@@ -17,7 +17,7 @@ class CommentService(
                 return ValidationEvents.ErrorCommentTooLong
             }
         }
-        repository.createComment(
+       repository.createComment(
             comment = Comment(
                 comment =  createCommentRequest.comment,
                 userId = userId,
@@ -28,6 +28,9 @@ class CommentService(
         return ValidationEvents.Success
     }
 
+    suspend fun deleteCommentsFromPost(postId: String) {
+         repository.deleteCommentsFromPost(postId)
+    }
     suspend fun deleteComment(commentId:String):Boolean {
         return repository.deleteComment(commentId)
     }
@@ -40,7 +43,7 @@ class CommentService(
         return repository.getComment(commentId)
     }
 
-    sealed class ValidationEvents{
+    sealed class ValidationEvents {
         object ErrorFieldEmpty:ValidationEvents()
         object ErrorCommentTooLong:ValidationEvents()
         object Success:ValidationEvents()

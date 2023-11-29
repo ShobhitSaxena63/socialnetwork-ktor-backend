@@ -3,6 +3,7 @@ package com.shobhit63.routes
 import com.shobhit63.data.requests.CreateCommentRequest
 import com.shobhit63.data.requests.DeleteCommentRequest
 import com.shobhit63.data.response.BasicApiResponse
+import com.shobhit63.service.ActivityService
 import com.shobhit63.service.CommentService
 import com.shobhit63.service.LikeService
 import com.shobhit63.service.UserService
@@ -18,6 +19,7 @@ import io.ktor.server.routing.*
 
 fun Route.createComment(
     commentService: CommentService,
+    activityService: ActivityService
 ) {
     authenticate {
         post("/api/comment/create") {
@@ -26,7 +28,8 @@ fun Route.createComment(
                 return@post
             }
 
-            when (commentService.createComment(request,call.userId)) {
+            val userId = call.userId
+            when (commentService.createComment(request,userId)) {
                 is CommentService.ValidationEvents.ErrorFieldEmpty -> {
                     call.respond(
                         HttpStatusCode.OK,
@@ -48,6 +51,10 @@ fun Route.createComment(
                 }
 
                 is CommentService.ValidationEvents.Success -> {
+                    activityService.addCommentActivity(
+                        byUserId = userId,
+                        postId = request.postId
+                    )
                     call.respond(
                         HttpStatusCode.OK,
                         BasicApiResponse(

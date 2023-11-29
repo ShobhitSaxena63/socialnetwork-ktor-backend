@@ -3,6 +3,7 @@ package com.shobhit63.routes
 import com.shobhit63.data.requests.CreatePostRequest
 import com.shobhit63.data.requests.DeletePostRequest
 import com.shobhit63.data.response.BasicApiResponse
+import com.shobhit63.service.CommentService
 import com.shobhit63.service.LikeService
 import com.shobhit63.service.PostService
 import com.shobhit63.service.UserService
@@ -58,7 +59,6 @@ fun Route.getPostsForFollows(
         get("api/post/get") {
             val page = call.parameters[PARAM_PAGE]?.toIntOrNull() ?: 0
             val pageSize = call.parameters[PARAM_PAGE_SIZE]?.toIntOrNull() ?: DEFAULT_POST_PAGE_SIZE
-
             val posts = postService.getPostsForFollows(call.userId, page, pageSize)
             call.respond(
                 HttpStatusCode.OK,
@@ -71,7 +71,8 @@ fun Route.getPostsForFollows(
 
 fun Route.deletePost(
     postService: PostService,
-    likeService: LikeService
+    likeService: LikeService,
+    commentService: CommentService
 ) {
     authenticate {
         delete("/api/post/delete") {
@@ -90,6 +91,7 @@ fun Route.deletePost(
                 postService.deletePost(request.postId)
                 likeService.deleteLikesForParent(request.postId)
                 //TODO: Delete comments from post
+                commentService.deleteCommentsFromPost(request.postId)
                 call.respond(HttpStatusCode.OK)
 
             } else {

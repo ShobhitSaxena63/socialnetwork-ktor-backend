@@ -1,5 +1,7 @@
 package com.shobhit63.di
 
+import com.shobhit63.repository.activity.ActivityRepository
+import com.shobhit63.repository.activity.ActivityRepositoryImpl
 import com.shobhit63.repository.comment.CommentRepository
 import com.shobhit63.repository.comment.CommentRepositoryImpl
 import com.shobhit63.repository.follow.FollowRepository
@@ -36,6 +38,9 @@ val mainModule = module {
     single<CommentRepository> {
         CommentRepositoryImpl(get())
     }
+    single<ActivityRepository> {
+        ActivityRepositoryImpl(get())
+    }
     single {
         UserService(get())
     }
@@ -50,5 +55,8 @@ val mainModule = module {
     }
     single {
         CommentService(get())
+    }
+    single {
+        ActivityService(get(), get(), get())
     }
 }

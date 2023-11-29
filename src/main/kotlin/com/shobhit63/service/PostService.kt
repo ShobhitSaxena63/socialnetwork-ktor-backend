@@ -9,11 +9,11 @@ import com.shobhit63.util.Constants.DEFAULT_POST_PAGE_SIZE
 class PostService(
     private val repository: PostRepository
 ) {
-    suspend fun createPostIfUserExists(request:CreatePostRequest):Boolean {
+    suspend fun createPostIfUserExists(request:CreatePostRequest,userId: String):Boolean {
         return repository.createPostIfUserExists(
             Post(
                 imageUrl = "",
-                userId = request.userId,
+                userId = userId,
                 timeStamp = System.currentTimeMillis(),
                 description = request.description
             )

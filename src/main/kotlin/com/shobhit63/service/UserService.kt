@@ -15,6 +15,17 @@ class UserService(
     suspend fun doesUserWithEmailExist(email: String): Boolean {
         return repository.getUserByEmail(email) != null
     }
+    suspend fun doesEmailBelongsToUserId(email: String, userId: String): Boolean {
+        return repository.doesEmailBelongToUserId(email, userId)
+    }
+
+    suspend fun getUserByEmail(email:String):User? {
+        return repository.getUserByEmail(email)
+    }
+
+    fun isValidPassword(enteredPassword:String,actualPassword:String):Boolean {
+        return enteredPassword == actualPassword
+    }
 
     suspend fun doesPasswordMatchForUser(request: LoginRequest): Boolean {
         return repository.doesPasswordForUserMatch(
@@ -23,9 +34,6 @@ class UserService(
         )
     }
 
-    suspend fun doesEmailBelongsToUserId(email: String, userId: String): Boolean {
-        return repository.doesEmailBelongToUserId(email, userId)
-    }
 
     suspend fun createUser(request: CreateAccountRequest) {
         repository.createUser(

@@ -14,7 +14,6 @@ import io.ktor.server.routing.*
 
 fun Route.likeParent(
     likeService: LikeService,
-    userService: UserService
 ) {
     authenticate {
         post("/api/like") {
@@ -22,11 +21,7 @@ fun Route.likeParent(
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
-            ifEmailBelongsToUser(
-                userId = request.userId,
-                validateEmail = userService::doesEmailBelongsToUserId
-            ) {
-                val likeSuccessful = likeService.likeParent(request.userId, request.parentId)
+                val likeSuccessful = likeService.likeParent(call.userId, request.parentId)
                 if (likeSuccessful) {
                     call.respond(HttpStatusCode.OK,
                     BasicApiResponse(
@@ -41,15 +36,12 @@ fun Route.likeParent(
                         )
                     )
                 }
-
-            }
         }
     }
 }
 
 fun Route.unLikeParent(
     likeService: LikeService,
-    userService: UserService
 ) {
     authenticate {
         delete("/api/unlike") {
@@ -57,11 +49,7 @@ fun Route.unLikeParent(
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
-            ifEmailBelongsToUser(
-                userId = request.userId,
-                validateEmail = userService::doesEmailBelongsToUserId
-            ) {
-                val unLikeSuccessful = likeService.unLikeParent(request.userId, request.parentId)
+                val unLikeSuccessful = likeService.unLikeParent(call.userId, request.parentId)
                 if (unLikeSuccessful) {
                     call.respond(HttpStatusCode.OK,
                     BasicApiResponse(
@@ -76,8 +64,6 @@ fun Route.unLikeParent(
                         )
                     )
                 }
-
-            }
         }
     }
 }

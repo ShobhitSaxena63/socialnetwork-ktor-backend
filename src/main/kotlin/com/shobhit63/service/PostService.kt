@@ -29,6 +29,16 @@ class PostService(
             userId, page, pageSize
         )
     }
+
+    suspend fun getPostsForProfile(
+        userId:String,
+        page:Int = 0,
+        pageSize :Int = DEFAULT_POST_PAGE_SIZE
+    ): List<Post> {
+        return repository.getPostsForProfile(
+            userId, page, pageSize
+        )
+    }
     suspend fun getPost(postId:String):Post? = repository.getPost(postId)
 
     suspend fun deletePost(postId:String) {

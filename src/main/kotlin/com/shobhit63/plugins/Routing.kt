@@ -3,6 +3,7 @@ package com.shobhit63.plugins
 import com.shobhit63.routes.*
 import com.shobhit63.service.*
 import io.ktor.server.application.*
+import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
@@ -27,6 +28,9 @@ fun Application.configureRouting() {
             jwtSecret = jwtSecret
             )
         searchUser(userService)
+        getUserProfile(userService)
+        getPostsForProfile(postService)
+        updateUserProfile(userService)
 
         //Following routes
         followUser(followService,activityService)
@@ -49,6 +53,8 @@ fun Application.configureRouting() {
         //Activity routes
         getActivities(activityService)
 
-
+        static {
+            resources("static")
+        }
     }
 }

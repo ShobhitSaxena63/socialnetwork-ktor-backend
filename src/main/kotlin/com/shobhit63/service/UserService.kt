@@ -2,6 +2,8 @@ package com.shobhit63.service
 
 import com.shobhit63.data.models.User
 import com.shobhit63.data.requests.CreateAccountRequest
+import com.shobhit63.data.requests.UpdateProfileRequest
+import com.shobhit63.data.response.ProfileResponse
 import com.shobhit63.data.response.UserResponseItem
 import com.shobhit63.repository.follow.FollowRepository
 import com.shobhit63.repository.user.UserRepository
@@ -18,12 +20,38 @@ class UserService(
         return userRepository.doesEmailBelongToUserId(email, userId)
     }
 
+    suspend fun getUserProfile(userId: String, callerUserId: String): ProfileResponse? {
+        val user = userRepository.getUserById(userId) ?: return null
+        return ProfileResponse(
+            username = user.username,
+            bio = user.bio,
+            followerCount = user.followerCount,
+            followingCount = user.followingCount,
+            postCount = user.postCount,
+            profilePictureUrl = user.profileImageUrl,
+            topSkillUrls = user.skills,
+            gitHubUrl = user.gitHubUrl,
+            instagramUrl = user.instagramURl,
+            linkedInUrl = user.linkedInURl,
+            isOwnProfile = userId == callerUserId,
+            isFollowing = if (userId != callerUserId) followRepository.doesUserFollow(callerUserId, userId) else false
+        )
+    }
+
     suspend fun getUserByEmail(email: String): User? {
         return userRepository.getUserByEmail(email)
     }
 
     fun isValidPassword(enteredPassword: String, actualPassword: String): Boolean {
         return enteredPassword == actualPassword
+    }
+
+    suspend fun updateUser(
+        userId: String,
+        profileImageUrl: String,
+        updateProfileRequest: UpdateProfileRequest
+    ): Boolean {
+        return userRepository.updateUser(userId,profileImageUrl, updateProfileRequest)
     }
 
     suspend fun searchForUsers(query: String, userId: String): List<UserResponseItem> {
@@ -50,8 +78,9 @@ class UserService(
                 bio = "",
                 gitHubUrl = null,
                 instagramURl = null,
-                linkedInURl = null
-            )
+                linkedInURl = null,
+
+                )
         )
     }
 

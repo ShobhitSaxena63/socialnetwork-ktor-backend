@@ -1,5 +1,6 @@
 package com.shobhit63.di
 
+import com.google.gson.Gson
 import com.shobhit63.repository.activity.ActivityRepository
 import com.shobhit63.repository.activity.ActivityRepositoryImpl
 import com.shobhit63.repository.comment.CommentRepository
@@ -58,5 +59,8 @@ val mainModule = module {
     }
     single {
         ActivityService(get(), get(), get())
+    }
+    single {
+        Gson()
     }
 }
